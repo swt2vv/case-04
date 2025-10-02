@@ -36,9 +36,6 @@ def submit_survey():
     except ValidationError as ve:
         return jsonify({"error": "validation_error", "detail": ve.errors()}), 422
 
-    submission_id = submission.submission_id or sha256_hex(email_norm + hour_stamp)
-
-
     email_norm = submission.email.strip().lower()
     hashed_email = sha256_hex(email_norm)
     hashed_age = sha256_hex(str(submission.age))
@@ -61,7 +58,7 @@ def submit_survey():
         received_at=datetime.now(timezone.utc),
         ip=request.headers.get("X-Forwarded-For", request.remote_addr or "")
     )
-    
+
     append_json_line(record.dict())
     return jsonify({"status": "ok"}), 201
 
